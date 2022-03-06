@@ -38,7 +38,7 @@ android {
 // Passwords/Alias should be moved to keys.properties
     signingConfigs {
         release {
-            storeFile file('E:\\Programmering\\AndroidProjects\\HMAssignment\\app\\upload_keystore.keystore')
+            storeFile file("upload_keystore.keystore")
             storePassword 'testar123'
             keyAlias 'HMAssignmentKeystore'
             keyPassword 'testar123'
