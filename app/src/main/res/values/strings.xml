@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">HMAssignment</string>
+
+    <string name="welcome">Welcome, please press to enter</string>
+    <string name="loading">Loading</string>
+    <string name="search">Search</string>
+    <string name="capital">Capital: %1$s</string>
+    <string name="region">Region: %1$s</string>
+    <string name="region_dropdown_filter">Current region filter: %1$s</string>
+</resources>
