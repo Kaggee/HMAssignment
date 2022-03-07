@@ -3,9 +3,10 @@ package hm.assignment.app.screens.country
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -18,14 +19,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
-import coil.size.OriginalSize
 import hm.assignment.app.BuildConfig
 import hm.assignment.app.R
 import hm.assignment.app.api.models.CountryModel
 import hm.assignment.app.screens.Loading
+import hm.assignment.app.util.Colors
 import hm.assignment.app.util.UiState
-import hm.assignment.app.util.log
 import org.koin.androidx.compose.viewModel
 
 /**
@@ -67,18 +66,30 @@ fun CountrySuccess(country: CountryModel) {
                 .fillMaxWidth()
                 .padding(8.dp)) {
 
-                val (title, capital, region, image) = createRefs()
+                val (title, capital, region, image, favourite) = createRefs()
+                if(country.favourite) {
+                    Icon(
+                        Icons.Filled.Favorite,
+                        contentDescription = "Favourite",
+                        tint = Colors.EbonyColors.secondary,
+                        modifier = Modifier.constrainAs(favourite) {
+                            start.linkTo(parent.start)
+                            top.linkTo(parent.top)
+                        }
+                    )
+                }
                 Text(
                     text = country.name,
                     fontSize = 20.sp,
                     fontStyle = FontStyle.Italic,
                     modifier = Modifier.constrainAs(title) {
-                        top.linkTo(parent.top)
+                        top.linkTo(favourite.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(image.start, margin = 8.dp)
                         width = Dimension.fillToConstraints
                     }
                 )
+
                 Text(
                     text = stringResource(id = R.string.capital, country.capital),
                     modifier = Modifier.constrainAs(capital) {
@@ -100,12 +111,15 @@ fun CountrySuccess(country: CountryModel) {
                 AsyncImage(
                     model = "${BuildConfig.COUNTRY_FLAGS_IMAGE_URL}${country.alpha2Code}",
                     placeholder = painterResource(id = R.drawable.loading),
+                    error = painterResource(id = R.drawable.broken_image),
                     contentDescription = "",
                     modifier = Modifier.constrainAs(image) {
                         end.linkTo(parent.end)
-                        top.linkTo(parent.top)
+                        top.linkTo(title.top)
                         bottom.linkTo(parent.bottom)
-                    }
+                        height = Dimension.wrapContent
+                        width = Dimension.wrapContent
+                    }.size(80.dp)
                 )
             }
         }
@@ -116,5 +130,5 @@ fun CountrySuccess(country: CountryModel) {
 @Preview
 @Composable
 fun Preview_CountryItem() {
-    CountrySuccess(CountryModel("Sweden", "Stockholm", "Europe", "SE"))
+    CountrySuccess(CountryModel("SwedenCAnBeaReallyLongName That is superlong", "Stockholm", "Europe", "SE"))
 }

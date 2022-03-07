@@ -7,4 +7,5 @@
     <string name="capital">Capital: %1$s</string>
     <string name="region">Region: %1$s</string>
     <string name="region_dropdown_filter">Current region filter: %1$s</string>
+    <string name="go_to_favourites">Favourites</string>
 </resources>

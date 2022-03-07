@@ -36,17 +36,13 @@ class CountriesViewModel(
                     is ApiResultWrapper.Success -> {
                         countryDao.insertCountries(result.value)
                         sortAllRegions(countries)
-                        withContext(Dispatchers.Main) {
-                            setSuccessWithSearch(result.value)
-                        }
+                        setSuccessWithSearch(result.value)
                     }
                     else -> {} //TODO Add error Screen
                 }
             } else {
                 sortAllRegions(countries)
-                withContext(Dispatchers.Main) {
-                    setSuccessWithSearch(countries)
-                }
+                setSuccessWithSearch(countries)
             }
         }
     }
@@ -102,6 +98,10 @@ class CountriesViewModel(
         if(mFilteredRegion == Constants.DropdownRegionAll) {
             getCountriesFromApiOrDb()
         }
+    }
+
+    fun getCurrentCountries(): List<CountryModel> {
+        return mCurrentCountries
     }
 
     fun getSearchWord(): String {

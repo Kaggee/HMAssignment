@@ -3,6 +3,8 @@ package hm.assignment.app.screens.countries
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +19,7 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -50,7 +53,6 @@ fun CountriesScreen(navController: NavController) {
         }
         is UiState.Success -> CountriesSuccess(
             navController = navController,
-            countries = state.data,
             regionSelected = viewModel.getFilterRegion(),
             onFilterRegion = {
                 viewModel.filterByRegion(it)
@@ -65,7 +67,6 @@ fun CountriesScreen(navController: NavController) {
 @Composable
 fun CountriesSuccess (
     navController: NavController?,
-    countries: List<CountryModel>,
     regionSelected: String,
     onSearchRegion: (String) -> Unit,
     onFilterRegion: (String) -> Unit)
@@ -73,24 +74,70 @@ fun CountriesSuccess (
     val viewModel by viewModel<CountriesViewModel>()
     var searchValue by remember { mutableStateOf(viewModel.getSearchWord()) }
     var isNavigating by remember { mutableStateOf(false) }
-    var mListItems: List<CountryModel> by remember { mutableStateOf(listOf()) }
+    var mListItems: List<CountryModel> by remember { mutableStateOf(viewModel.getCurrentCountries()) }
 
     mListItems = when(val state = viewModel.objectState.collectAsState().value) {
         is UiState.Success -> state.data
-        else -> countries
+        else -> viewModel.getCurrentCountries()
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, top = 4.dp, end = 4.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            GetRegionDropdown(regionSelected, onFilterRegion)
+            ConstraintLayout(modifier = Modifier
+                .fillMaxWidth()
+            ) {
+                val (dropdownConstraint, buttonConstraint) = createRefs()
+
+                Box (
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .border(BorderStroke(1.dp, Color.White))
+                        .constrainAs(dropdownConstraint) {
+                            start.linkTo(parent.start)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }
+                ) {
+                    GetRegionDropdown(regionSelected, onFilterRegion)
+                }
+
+                TextButton(
+                    onClick = {
+                        if(!isNavigating) {
+                            isNavigating = true
+                            navController?.navigate(Screen.Favourites.route)
+                        }
+                    },
+                    modifier = Modifier.constrainAs(buttonConstraint) {
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = "Favourite",
+                        tint = Colors.EbonyColors.secondary
+                    )
+                    Text(
+                        stringResource(id = R.string.go_to_favourites),
+                        color = Color.White,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+            }
         }
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, end = 4.dp)
         ) {
             OutlinedTextField(
                 value = searchValue,
@@ -119,7 +166,9 @@ fun CountriesSuccess (
             modifier = Modifier.fillMaxWidth()
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(top = 4.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 4.dp)
             ) {
                 mListItems.forEach { country ->
                     item {
@@ -142,37 +191,34 @@ fun GetRegionDropdown(regionSelected: String, onSelectRegion: (String) -> Unit) 
     var expanded by remember { mutableStateOf(false) }
     val items = viewModel.getAllRegions()
 
-    Box(
-        modifier = Modifier.wrapContentSize(Alignment.TopEnd)
+    IconButton(
+        onClick = { expanded = true },
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
     ) {
-        IconButton(
-            onClick = { expanded = true }
-        ) {
-            Row {
-                Text(
-                    modifier = Modifier.padding(end = 2.dp),
-                    text = stringResource(id = R.string.region_dropdown_filter, regionSelected),
-                    color = Color.White
-                )
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    tint = Color.White,
-                    contentDescription = "Region Filter",
-                    modifier = Modifier.padding(start = 2.dp)
-                )
-            }
+        Row {
+            Text(
+                modifier = Modifier.padding(end = 2.dp),
+                text = stringResource(id = R.string.region_dropdown_filter, regionSelected),
+                color = Color.White
+            )
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                tint = Color.White,
+                contentDescription = "Region Filter",
+                modifier = Modifier.padding(start = 2.dp)
+            )
         }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            items.forEach { region ->
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    onSelectRegion.invoke(region)
-                }) {
-                    Text(region)
-                }
+    }
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false }
+    ) {
+        items.forEach { region ->
+            DropdownMenuItem(onClick = {
+                expanded = false
+                onSelectRegion.invoke(region)
+            }) {
+                Text(region)
             }
         }
     }

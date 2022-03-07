@@ -10,4 +10,5 @@ sealed class Screen(val route: String) {
     object Country: Screen("${Destinations.Country}/{countryId}") {
         fun createRoute(countryId: String) = "${Destinations.Country}/$countryId"
     }
+    object Favourites: Screen(Destinations.Favourites)
 }

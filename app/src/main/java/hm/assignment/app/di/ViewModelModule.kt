@@ -2,6 +2,7 @@ package hm.assignment.app.di
 
 import hm.assignment.app.screens.countries.CountriesViewModel
 import hm.assignment.app.screens.country.CountryViewModel
+import hm.assignment.app.screens.favourites.FavouriteViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -13,4 +14,5 @@ import org.koin.dsl.module
 val viewModelModule = module {
     viewModel { CountriesViewModel(get(), get()) }
     viewModel { CountryViewModel(get()) }
+    viewModel { FavouriteViewModel(get()) }
 }

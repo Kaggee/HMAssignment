@@ -7,6 +7,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import hm.assignment.app.navigation.Screen
 import hm.assignment.app.screens.countries.CountriesScreen
 import hm.assignment.app.screens.country.CountryScreen
+import hm.assignment.app.screens.favourites.FavouritesScreen
 import hm.assignment.app.screens.welcome.WelcomeScreen
 import hm.assignment.app.util.Colors
 
@@ -27,6 +29,7 @@ import hm.assignment.app.util.Colors
  * Created on 2022-03-04.
  * CopyrightⒸ Kagge
  */
+@ExperimentalFoundationApi
 @ExperimentalCoilApi
 @ExperimentalAnimationApi
 class HomeActivity: ComponentActivity() {
@@ -39,6 +42,7 @@ class HomeActivity: ComponentActivity() {
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalCoilApi
 @ExperimentalAnimationApi
 @Composable
@@ -93,6 +97,18 @@ fun HomeScreen() {
                     requireNotNull(countryId) { "Need countryId to navigate!" }
                     CountryScreen(countryId = countryId)
                 }
+                composable(
+                    route = Screen.Favourites.route,
+                    enterTransition = {
+                        slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(animDuration))
+                    },
+                    exitTransition = {
+                        slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(animDuration))
+                    },
+                    popExitTransition = {
+                        slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(animDuration))
+                    }
+                ) { FavouritesScreen() }
             }
         }
     }
