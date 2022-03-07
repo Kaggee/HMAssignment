@@ -26,6 +26,9 @@ interface CountryDao {
     @Query("SELECT * FROM ${Constants.CountriesTable} WHERE name like :name || '%'")
     fun searchCountry(name: String): List<CountryModel>
 
+    @Query("UPDATE ${Constants.CountriesTable} SET favourite = :favourite WHERE name = :countryName")
+    fun setCountryFavourite(countryName: String, favourite: Boolean)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCountries(countries: List<CountryModel>)
 }

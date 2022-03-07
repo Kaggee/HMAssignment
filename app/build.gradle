@@ -25,6 +25,12 @@ android {
             buildConfigField('String', 'COUNTRY_FLAGS_IMAGE_URL', "\"https://countryflagsapi.com/png/\"")
 
             testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+            kapt {
+                arguments {
+                    arg("room.schemaLocation", "$projectDir/schemas")
+                }
+            }
         }
     } else {
         throw new GradleException("Could not read keys.properties")
@@ -46,7 +52,7 @@ android {
     }
 
     buildTypes {
-        release {
+        release { 
             signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -56,6 +62,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }

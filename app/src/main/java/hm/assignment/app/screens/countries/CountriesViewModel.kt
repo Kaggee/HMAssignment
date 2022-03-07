@@ -84,6 +84,13 @@ class CountriesViewModel(
         }
     }
 
+    fun setFavourite(countryName: String, favourite: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            countryDao.setCountryFavourite(countryName, favourite)
+            mCurrentCountries.first { it.name == countryName }.favourite = favourite
+        }
+    }
+
     fun filterByWord(searchWord: String) {
         viewModelObjectState.value = UiState.Loading
         mSearchWord = searchWord

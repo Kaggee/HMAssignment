@@ -45,6 +45,7 @@ class HomeActivity: ComponentActivity() {
 fun HomeScreen() {
     val navigationController = rememberAnimatedNavController()
     val animDuration = 1000
+
     MaterialTheme(colors = Colors.EbonyColors) {
         Box(
             modifier = Modifier

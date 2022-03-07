@@ -20,5 +20,8 @@ val repositoryModule = module {
 }
 
 fun provideCountryLayerDatabase(context: Context): CountryLayerDatabase {
-    return Room.databaseBuilder(context, CountryLayerDatabase::class.java, Constants.RoomDBName).build()
+    return Room
+        .databaseBuilder(context, CountryLayerDatabase::class.java, Constants.RoomDBName)
+        .addMigrations(CountryLayerDatabase.MIGRATION_1_2)
+        .build()
 }

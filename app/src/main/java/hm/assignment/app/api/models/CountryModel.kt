@@ -16,5 +16,6 @@ data class CountryModel(
     @PrimaryKey val name: String,
     @ColumnInfo val capital: String,
     @ColumnInfo val region: String,
-    @ColumnInfo val alpha2Code: String
+    @ColumnInfo val alpha2Code: String,
+    @ColumnInfo var favourite: Boolean = false
 ): Serializable

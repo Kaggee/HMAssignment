@@ -1,5 +1,8 @@
 package hm.assignment.app.screens.countries
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,7 +10,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,6 +72,7 @@ fun CountriesSuccess (
 {
     val viewModel by viewModel<CountriesViewModel>()
     var searchValue by remember { mutableStateOf(viewModel.getSearchWord()) }
+    var isNavigating by remember { mutableStateOf(false) }
     var mListItems: List<CountryModel> by remember { mutableStateOf(listOf()) }
 
     mListItems = when(val state = viewModel.objectState.collectAsState().value) {
@@ -112,11 +119,16 @@ fun CountriesSuccess (
             modifier = Modifier.fillMaxWidth()
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().padding(top = 4.dp)
             ) {
                 mListItems.forEach { country ->
                     item {
-                        GetCountryItem(navController, country)
+                        GetCountryItem(country) {
+                            if(!isNavigating) {
+                                isNavigating = true
+                                navController?.navigate(Screen.Country.createRoute(country.name))
+                            }
+                        }
                     }
                 }
             }
@@ -167,7 +179,10 @@ fun GetRegionDropdown(regionSelected: String, onSelectRegion: (String) -> Unit) 
 }
 
 @Composable
-fun GetCountryItem(navController: NavController?, country: CountryModel) {
+fun GetCountryItem(country: CountryModel, onNavigate: () -> Unit) {
+    val vm by viewModel<CountriesViewModel>()
+    var isFavourite by remember { mutableStateOf(country.favourite) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -176,14 +191,13 @@ fun GetCountryItem(navController: NavController?, country: CountryModel) {
         elevation = 20.dp,
         backgroundColor = Colors.EbonyColors.primaryVariant,
         onClick = {
-            navController?.navigate(Screen.Country.createRoute(country.name))
+            onNavigate.invoke()
         }
     ) {
-        val icons = Icons.Rounded
         ConstraintLayout(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            val (textConstraint, iconConstraint) = createRefs()
+            val (textConstraint, iconConstraint, favouriteConstraint) = createRefs()
             Text(
                 text = country.name,
                 modifier = Modifier.constrainAs(textConstraint) {
@@ -195,8 +209,33 @@ fun GetCountryItem(navController: NavController?, country: CountryModel) {
                 },
                 color = Color.White
             )
+            IconToggleButton(
+                checked = isFavourite,
+                onCheckedChange = {
+                    isFavourite = it
+                    vm.setFavourite(country.name, isFavourite)
+                },
+                modifier = Modifier.constrainAs(favouriteConstraint) {
+                    end.linkTo(iconConstraint.start, margin = 8.dp)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+            ) {
+                val transition = updateTransition(isFavourite, label = "Favourite")
+                val tint by transition.animateColor(
+                    label = "Favourite Tint"
+                ) { isChecked ->
+                    if(isChecked) Colors.EbonyColors.secondary else Colors.EbonyColors.secondaryVariant
+                }
+
+                Icon(
+                    imageVector = if (isFavourite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    contentDescription = "Favourite",
+                    tint = tint
+                )
+            }
             Icon(
-                icons.ArrowForward,
+                Icons.Rounded.ArrowForward,
                 modifier = Modifier.constrainAs(iconConstraint) {
                     end.linkTo(parent.end, margin = 8.dp)
                     top.linkTo(parent.top)
@@ -216,5 +255,7 @@ fun Preview_CountryItem() {
     countryList.add(CountryModel("TestCountry", "TestCapital", "TestRegion", "SE"))
     countryList.add(CountryModel("TestCountry", "TestCapital", "TestRegion", "SE"))
     CountriesSuccess(navController = null, countries = countryList, "") {}*/
-    GetCountryItem(navController = null, country = CountryModel("TestCountry", "TestCapital", "TestRegion", "SE"))
+    GetCountryItem(country = CountryModel("TestCountry", "TestCapital", "TestRegion", "SE")) {
+
+    }
 }
