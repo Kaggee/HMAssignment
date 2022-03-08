@@ -15,23 +15,20 @@ import hm.assignment.app.util.Constants
 @Dao
 interface CountryDao {
     @Query("SELECT * FROM ${Constants.CountriesTable}")
-    fun getAllCountries(): List<CountryModel>
+    suspend fun getAllCountries(): List<CountryModel>
 
     @Query("SELECT * FROM ${Constants.CountriesTable} WHERE region LIKE :region")
-    fun getAllCountriesByRegion(region: String): List<CountryModel>
+    suspend fun getAllCountriesByRegion(region: String): List<CountryModel>
 
     @Query("SELECT * FROM ${Constants.CountriesTable} WHERE name like :name")
-    fun getCountry(name: String): CountryModel
-
-    @Query("SELECT * FROM ${Constants.CountriesTable} WHERE name like :name || '%'")
-    fun searchCountry(name: String): List<CountryModel>
+    suspend fun getCountry(name: String): CountryModel
 
     @Query("SELECT * FROM ${Constants.CountriesTable} WHERE favourite = 1")
-    fun getFavourites(): List<CountryModel>
+    suspend fun getFavourites(): List<CountryModel>
 
     @Query("UPDATE ${Constants.CountriesTable} SET favourite = :favourite WHERE name = :countryName")
-    fun setCountryFavourite(countryName: String, favourite: Boolean)
+    suspend fun setCountryFavourite(countryName: String, favourite: Boolean)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCountries(countries: List<CountryModel>)
+    suspend fun insertCountries(countries: List<CountryModel>)
 }

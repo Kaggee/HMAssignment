@@ -5,19 +5,19 @@ import hm.assignment.app.api.models.CountryModel
 import hm.assignment.app.dao.CountryDao
 import hm.assignment.app.screens.BaseViewModel
 import hm.assignment.app.util.UiState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 /**
  * Created on 2022-03-07.
  * CopyrightⒸ Kagge
  */
-class FavouriteViewModel(private val countryDb: CountryDao): BaseViewModel<List<CountryModel>>() {
+class FavouriteViewModel(
+    private val countryDb: CountryDao,
+    private val ioDispatcher: CoroutineDispatcher
+): BaseViewModel<List<CountryModel>>() {
 
     fun getFavourites() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             // Delay, "cheating" version for letting transition animation finish.
             delay(750)
             val countries = countryDb.getFavourites()
