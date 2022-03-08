@@ -6,7 +6,7 @@
     <string name="search">Search</string>
     <string name="capital">Capital: %1$s</string>
     <string name="region">Region: %1$s</string>
-    <string name="region_dropdown_filter">Current region filter: %1$s</string>
+    <string name="region_dropdown_filter">Region filter: %1$s</string>
     <string name="go_to_favourites">Favourites</string>
     <string name="try_again">Try Again</string>
     <string name="error_generic_title">Something went wrong!</string>

@@ -206,7 +206,7 @@ fun GetRegionDropdown(regionSelected: String, onSelectRegion: (String) -> Unit) 
 
     IconButton(
         onClick = { expanded = true },
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+        modifier = Modifier.padding(start = 8.dp, end = 8.dp)
     ) {
         Row {
             Text(
