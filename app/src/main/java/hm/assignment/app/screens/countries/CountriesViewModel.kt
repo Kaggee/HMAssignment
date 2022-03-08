@@ -38,7 +38,8 @@ class CountriesViewModel(
                         sortAllRegions(countries)
                         setSuccessWithSearch(result.value)
                     }
-                    else -> {} //TODO Add error Screen
+                    is ApiResultWrapper.GenericError -> viewModelUiState.value = UiState.ApiError
+                    is ApiResultWrapper.NetworkError -> viewModelUiState.value = UiState.NetworkError
                 }
             } else {
                 sortAllRegions(countries)
@@ -98,6 +99,10 @@ class CountriesViewModel(
         if(mFilteredRegion == Constants.DropdownRegionAll) {
             getCountriesFromApiOrDb()
         }
+    }
+
+    fun setStateLoading() {
+        viewModelUiState.value = UiState.Loading
     }
 
     fun getCurrentCountries(): List<CountryModel> {

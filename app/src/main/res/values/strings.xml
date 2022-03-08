@@ -8,4 +8,9 @@
     <string name="region">Region: %1$s</string>
     <string name="region_dropdown_filter">Current region filter: %1$s</string>
     <string name="go_to_favourites">Favourites</string>
+    <string name="try_again">Try Again</string>
+    <string name="error_generic_title">Something went wrong!</string>
+    <string name="error_generic_desc">An unknown error occurred, please try again</string>
+    <string name="error_network_title">Could not connect.</string>
+    <string name="error_network_desc">A network error occurred, please check your connection and then try again</string>
 </resources>

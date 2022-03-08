@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import hm.assignment.app.R
 import hm.assignment.app.api.models.CountryModel
 import hm.assignment.app.navigation.Screen
+import hm.assignment.app.screens.ErrorScreen
 import hm.assignment.app.screens.Loading
 import hm.assignment.app.util.Colors
 import hm.assignment.app.util.UiState
@@ -46,7 +47,7 @@ import org.koin.androidx.compose.viewModel
 fun CountriesScreen(navController: NavController) {
     val viewModel by viewModel<CountriesViewModel>()
 
-    when(val state = viewModel.uiState.collectAsState().value) {
+    when(viewModel.uiState.collectAsState().value) {
         UiState.Loading -> {
             Loading()
             viewModel.getCountries()
@@ -61,6 +62,18 @@ fun CountriesScreen(navController: NavController) {
                 viewModel.filterByWord(it)
             }
         )
+        UiState.ApiError -> ErrorScreen(
+            title = stringResource(id = R.string.error_generic_title),
+            desc = stringResource(id = R.string.error_generic_desc)
+        ) {
+            viewModel.setStateLoading()
+        }
+        UiState.NetworkError -> ErrorScreen(
+            title = stringResource(id = R.string.error_network_title),
+            desc = stringResource(id = R.string.error_network_desc)
+        ) {
+            viewModel.setStateLoading()
+        }
     }
 }
 
